@@ -1,0 +1,14 @@
+{
+  "transport": "scp",
+  "hostname": "192.168.178.40",
+  "port": "22",
+  "username": "pi",
+  "password": "raspberry",
+  "target": "/srv/jukebox",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**"
+  ],
+  "uploadOnSave": true,
+  "deleteLocal": false
+}
