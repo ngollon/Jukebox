@@ -8,12 +8,15 @@ from os import listdir
 from os.path import isdir, join
 import RPi.GPIO as GPIO
 
+# Initialize display first to write Hello
+d = Display()
+d.draw_text("Hallo!", 40)
+
 library_path = "/srv/library"
 
 GPIO.setmode(GPIO.BCM)
 
 p = Player()
-d = Display()
 
 def on_tag_discovered(tag):
      # Check if there is a album with this name
@@ -29,11 +32,22 @@ def on_tag_discovered(tag):
 p.track_changed += lambda number: d.print_track_number(number)
 p.stopped += lambda: d.clear()
 
-d.draw_text("Test", 40)
+# We have a few buttons
+button_prev = Button(17, callback=p.previous)
+button_next = Button(18, callback=p.next)
+button_pause = Button(19, callback=p.toggle_pause)
+button_volup = Button(20, callback=p.volume_up)
+button_voldown = Button(21, callback=p.volume_down)
 
 tr = TagReader('tty:AMA0:pn532')
 tr.tag_discovered += on_tag_discovered
 
-wait = input("PRESS ENTER TO CONTINUE.")
+d.clear()
+
+try:
+    while True:
+        pass
+except KeyboardInterrupt:
+    pass
 
 GPIO.cleanup()
