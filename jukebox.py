@@ -10,13 +10,13 @@ import RPi.GPIO as GPIO
 
 # Initialize display first to write Hello
 d = Display()
-d.draw_text("Hallo!", 40)
+d.draw_text("Hallo!", 32)
 
 library_path = "/srv/library"
 
 GPIO.setmode(GPIO.BCM)
 
-p = Player()
+p = Player(24)
 
 def on_tag_discovered(tag):
      # Check if there is a album with this name
@@ -34,10 +34,10 @@ p.stopped += lambda: d.clear()
 
 # We have a few buttons
 button_prev = Button(17, callback=p.previous)
-button_next = Button(18, callback=p.next)
-button_pause = Button(19, callback=p.toggle_pause)
-button_volup = Button(20, callback=p.volume_up)
-button_voldown = Button(21, callback=p.volume_down)
+button_next = Button(27, callback=p.next)
+button_pause = Button(18, callback=p.toggle_pause)
+button_volup = Button(23, callback=p.volume_up)
+button_voldown = Button(22, callback=p.volume_down)
 
 tr = TagReader('tty:AMA0:pn532')
 tr.tag_discovered += on_tag_discovered

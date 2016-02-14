@@ -1,0 +1,9 @@
+[Unit]
+Description=Jukebox
+
+[Service]
+Type=simple
+ExecStart=/srv/jukebox/start
+
+[Install]
+WantedBy=multi-user.target
