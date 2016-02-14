@@ -9,19 +9,10 @@ class Display:
         self.diplay =  Adafruit_SSD1306.SSD1306_128_64(rst=24)
         self.diplay.begin()
 
-        self.diplay.clear()
-        self.diplay.display()
-
     def clear(self):
         self.diplay.clear()
         self.diplay.display()
-
-    def print_track_number(self, number):
-        self.draw_text(str(number), 40)
-
-    def print_tag(self, tag):
-        self.draw_text(tag, 12)
-
+            
     def draw_text(self, text, size):
         width = self.diplay.width
         height = self.diplay.height

@@ -5,7 +5,7 @@ import threading
 from time import sleep
 
 class Button:
-    DEBOUNCE_TIME = 0.2
+    DEBOUNCE_TIME = 0.1
 
     def __init__ (self, channel, callback = None):
         GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_UP)

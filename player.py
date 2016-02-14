@@ -1,4 +1,3 @@
-import vlc
 from os import listdir
 from os.path import isfile, join
 from natsort import natsorted, ns
@@ -6,18 +5,19 @@ from time import time
 from event import Event
 import RPi.GPIO as GPIO
 import threading
+import pexpect
 from subprocess import call
-
 
 class Player:
     def __init__ (self, enablePin):
-        self.media_player = vlc.MediaPlayer()
-        self.media_player.event_manager().event_attach(vlc.EventType.MediaPlayerEndReached, self.on_song_finished, 0)
+        self.media_player = pexpect.spawn('mpg321 -R player')
         self.playlist = []
         self.playlist_index = -1
-        self.playlist_thread = threading.Thread(target=self.run_playlist_thread)
-        self.playlist_thread.daemon = True
-        self.playlist_thread.start()
+
+        self.monitoring_thread = threading.Thread(target=self.run_monitoring_thread)
+        self.monitoring_thread.daemon = True
+        self.monitoring_thread.start()
+
         self.next_track_event = threading.Event()
         self.time_start_track = time()
         self.enablePin = enablePin
@@ -29,16 +29,12 @@ class Player:
         self.volume = 0
         self.set_volume(80)
 
-    def run_playlist_thread(self):
+    def run_monitoring_thread(self):
         try:
-            while(True):
-                self.next_track_event.wait()
-                self.next_track_event.clear()
-                if len(self.playlist) > self.playlist_index:
-                    self.play_track()
-                else:
-                    GPIO.output(self.enablePin, GPIO.LOW)
-                    self.stopped.fire()
+            while True:
+                self.media_player.expect("@P (0|3)", timeout=315360000)
+                print("Track Stopped")
+                self.on_song_finished()
         except (KeyboardInterrupt, SystemExit):
             pass
 
@@ -67,11 +63,7 @@ class Player:
             self.play_track()
 
     def toggle_pause(self):
-        print(self.media_player.is_playing())
-        if self.media_player.is_playing():
-            self.media_player.pause()
-        else:
-            self.media_player.play()
+        self.media_player.sendline("PAUSE")
 
     def volume_up(self):
         self.set_volume(self.volume + 5)
@@ -79,19 +71,21 @@ class Player:
     def volume_down(self):
         self.set_volume(self.volume - 5)
 
-
     def play_album(self, album):
         self.playlist = natsorted([join(album, f) for f in listdir(album) if isfile(join(album, f))], alg=ns.IGNORECASE)
         self.playlist_index = 0
         self.play_track()
 
     def play_track(self):
-        self.media_player.set_mrl(self.playlist[self.playlist_index])
-        self.media_player.play()
+        print("Track Started")
+        self.media_player.sendline("LOAD %s" % (self.playlist[self.playlist_index]))
         GPIO.output(self.enablePin, GPIO.HIGH)
         self.time_start_track = time()
         self.track_changed.fire(self.playlist_index + 1)
 
-    def on_song_finished(self, *args, **kwds):
+    def on_song_finished(self):
         self.playlist_index += 1
-        self.next_track_event.set()
+        if len(self.playlist) > self.playlist_index:
+            self.play_track()
+        else:
+            self.stopped.fire()
