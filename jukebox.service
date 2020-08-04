@@ -1,5 +1,6 @@
 [Unit]
 Description=Jukebox
+Requires=mopidy.service
 
 [Service]
 Type=simple

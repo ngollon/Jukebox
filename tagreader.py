@@ -1,6 +1,7 @@
 import nfc
 from event import Event
 from thread import start_new_thread
+from log import log
 
 class TagReader:
     def __init__ (self, connection_string):
@@ -13,5 +14,6 @@ class TagReader:
             self.clf.connect(rdwr={'on-connect': self.on_connect})
 
     def on_connect (self, tag):
+        log(f"TagReader: Tag {tag} discovered.")
         self.tag_discovered.fire(tag.identifier.encode('hex'))
         return True

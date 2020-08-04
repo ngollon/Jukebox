@@ -1,8 +1,8 @@
-from __future__ import print_function
 import RPi.GPIO as GPIO
 import event
 import threading
 from time import sleep
+from log import log
 
 class Button:
     DEBOUNCE_TIME = 0.1
@@ -17,8 +17,8 @@ class Button:
         if callback != None:
             self.pressed += callback
 
-        self.pressed += lambda: print("Channel %d pressed" % (self.channel))
-        self.released += lambda: print("Channel %d released" % (self.channel))
+        self.pressed += lambda: log(f"Button {self.channel} pressed.")
+        self.released += lambda: log(f"Button {self.channel} released.")
 
         self.edge_event = threading.Event()
         self.monitoring_thread = threading.Thread(target=self.run_monitoring_thread)

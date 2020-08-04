@@ -8,7 +8,7 @@ import threading
 import pexpect
 from subprocess import call
 
-class Player:
+class Mpg321Player:
     def __init__ (self, enablePin):
         self.media_player = pexpect.spawn('mpg321 -R player')
         self.playlist = []
