@@ -1,31 +1,26 @@
-import Adafruit_SSD1306
+from luma.core.interface.serial import i2c
+from luma.core.render import canvas
+from luma.oled.device import ssd1306
 
-import Image
-import ImageDraw
-import ImageFont
+from ImageFont import truetype
+
+# https://luma-oled.readthedocs.io/en/latest/hardware.html#i2c
 
 class Display:
     def __init__(self):
-        self.diplay =  Adafruit_SSD1306.SSD1306_128_64(rst=24)
-        self.diplay.begin()
+        self.serial = i2c(port=1, address=0x3C)        
+        self.device = ssd1306(self.serial)        
 
     def clear(self):
-        self.diplay.clear()
-        self.diplay.display()
+        with canvas(self.device):
+            pass        
             
     def draw_text(self, text, size):
-        width = self.diplay.width
-        height = self.diplay.height
-        image = Image.new('1', (width, height))
+        with canvas(self.device) as draw:
+            width = self.device.width
+            height = self.device.height
+        
+            font = truetype('VCR_OSD_MONO_1.001.ttf', size)
+            (tw, th) = font.getsize(text)
 
-        font = ImageFont.truetype('VCR_OSD_MONO_1.001.ttf', size)
-
-        draw = ImageDraw.Draw(image)
-        draw.rectangle((0,0,width,height), outline=0, fill=0)
-
-        (tw, th) = font.getsize(text)
-
-        draw.text(((width - tw) / 2, (height - th) / 2), text, font=font, fill=255)
-
-        self.diplay.image(image)
-        self.diplay.display()
+            draw.text(((width - tw) / 2, (height - th) / 2), text, font=font, fill=255)
