@@ -3,6 +3,7 @@ from event import Event
 import RPi.GPIO as GPIO
 import threading
 import musicpd
+from log import log
 
 class MpdPlayer:
     def __init__ (self, enablePin):
@@ -25,7 +26,7 @@ class MpdPlayer:
     def run_monitoring_thread(self):
         try:         
             while True:
-                print(self.client.cmd('idle'))     
+                print(self.client.idle())     
                 # Fire stopped and track_changed!           
         except (KeyboardInterrupt, SystemExit):
             pass
@@ -37,16 +38,20 @@ class MpdPlayer:
             new_volume = 70
         if new_volume != self.volume:
             self.volume = new_volume
-            self.client.cmd('volume', self.volume)
+            log(f"Player: Setting volume to {self.volume}")
+            self.client.volume(self.volume)
 
     def previous(self):
-        self.client.cmd('previous')
+        log(f"Player: Go to previous track")
+        self.client.previous()
 
     def next(self):
-        self.client.cmd('next')
+        log(f"Player: Go to next track")
+        self.client.next()
 
     def toggle_pause(self):
-        self.client.cmd('pause')
+        log(f"Player: Pause toggled")
+        self.client.pause()
 
     def volume_up(self):
         self.set_volume(self.volume + 5)
@@ -55,6 +60,7 @@ class MpdPlayer:
         self.set_volume(self.volume - 5)
 
     def play_album(self, album):
-        self.client.cmd('clear')
-        self.client.cmd('add', album)
-        self.client.cmd('play')        
+        log(f"Player: Starting album {album}")
+        self.client.clear()
+        self.client.add(album)
+        self.client.play()        

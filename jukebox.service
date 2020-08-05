@@ -3,8 +3,11 @@ Description=Jukebox
 Requires=mopidy.service
 
 [Service]
+User=pi
 Type=simple
-ExecStart=/srv/jukebox/start
+ExecStart=/usr/share/jukebox/start
+WorkingDirectory=/usr/share/jukebox
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

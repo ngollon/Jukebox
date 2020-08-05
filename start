@@ -1,4 +1,0 @@
-#!/bin/bash
-cd /srv/jukebox
-echo "Starting" > boot.txt
-/usr/bin/python /srv/jukebox/jukebox.py > /srv/jukebox/log.txt 2>&1
