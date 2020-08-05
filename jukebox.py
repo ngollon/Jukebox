@@ -13,7 +13,7 @@ log("Initializing Display")
 d = Display()
 d.draw_text("Hallo!", 32)
 
-index_path = "/srv/library/index"
+library_path = "/srv/library"
 
 GPIO.setmode(GPIO.BCM)
 
@@ -21,7 +21,7 @@ log("Initializing Player")
 p = MpdPlayer(24)
 
 log("Initalizing Libraries")
-library = Library(index_path)
+library = Library(library_path)
 
 def on_tag_discovered(tag):
     # Check if there is a album with this name
@@ -29,7 +29,7 @@ def on_tag_discovered(tag):
     if not uri is None:
         p.play_album(uri)
     else:
-        d.draw_text(tag, 12)
+        d.draw_text(tag, 12)    
 
 p.track_changed += lambda number: d.draw_text(str(number), 40)
 p.stopped += lambda: d.clear()
@@ -44,9 +44,19 @@ button_voldown = Button(22, callback=p.volume_down)
 
 log("Initializing Tag Reader")
 tr = TagReader('tty:AMA0:pn532')
-tr.tag_discovered += on_tag_discovered
 
 d.clear()
+
+log("Checking for new albums")
+for name in library.untagged_albums:
+    log(f"New album {name} found.")
+    d.draw_text(name, 12)
+    tag = tr.wait_for_tag()
+    library.index(tag, name)
+    log(f"New album {name} assigned to tag {tag}.")    
+
+tr.tag_discovered += on_tag_discovered
+
 log("Initialization done")
 
 try:
