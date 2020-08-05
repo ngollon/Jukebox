@@ -1,11 +1,9 @@
 import re
 from button import Button
 from tagreader import TagReader
-from mpg321_player import Mpg321Player
+from mpd_player import MpdPlayer
 from display import Display
-from os import listdir
-from os.path import isdir, join
-from library import FileLibrary, UriLibrary
+from library import Library
 import RPi.GPIO as GPIO
 from log import log
 
@@ -15,7 +13,7 @@ log("Initializing Display")
 d = Display()
 d.draw_text("Hallo!", 32)
 
-library_path = "/srv/library"
+index_path = "/srv/library/index"
 
 GPIO.setmode(GPIO.BCM)
 
@@ -23,16 +21,13 @@ log("Initializing Player")
 p = MpdPlayer(24)
 
 log("Initalizing Libraries")
-libraries = [
-    FileLibrary(library_path),
-    UriLibrary(library_path)
-]
+library = Library(index_path)
 
 def on_tag_discovered(tag):
     # Check if there is a album with this name
-    uris = [ u for u in  [ l.find_tag(tag) for l in libraries ] if not u is None ]
-    if any(uris):
-        p.play_album(next(iter(uris)))        
+    uri = library.find_tag(tag)
+    if not uri is None:
+        p.play_album(uri)
     else:
         d.draw_text(tag, 12)
 

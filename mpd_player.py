@@ -1,12 +1,8 @@
-from os import listdir
-from os.path import isfile, join
-from natsort import natsorted, ns
 from time import time
 from event import Event
 import RPi.GPIO as GPIO
 import threading
-import pexpect
-from subprocess import call
+import musicpd
 
 class MpdPlayer:
     def __init__ (self, enablePin):
@@ -14,15 +10,23 @@ class MpdPlayer:
         GPIO.setup(self.enablePin, GPIO.OUT)
         GPIO.output(self.enablePin, GPIO.LOW)
 
+        self.client = musicpd.MPDClient()
+        self.client.connect()
+
+        self.monitoring_thread = threading.Thread(target=self.run_monitoring_thread)
+        self.monitoring_thread.daemon = True
+        self.monitoring_thread.start()
+
         self.track_changed = Event()
         self.stopped = Event()
         self.volume = 0
-        self.set_volume(80)
-        # Poll MPD to fire stopped and track_changed
+        self.set_volume(80)        
 
     def run_monitoring_thread(self):
         try:         
-            pass
+            while True:
+                print(self.client.cmd('idle'))     
+                # Fire stopped and track_changed!           
         except (KeyboardInterrupt, SystemExit):
             pass
 
@@ -33,16 +37,16 @@ class MpdPlayer:
             new_volume = 70
         if new_volume != self.volume:
             self.volume = new_volume
-            # // Calcualte new volume and set to mpd
+            self.client.cmd('volume', self.volume)
 
     def previous(self):
-        # Send to MPD
+        self.client.cmd('previous')
 
     def next(self):
-        # Send to MPD
+        self.client.cmd('next')
 
     def toggle_pause(self):
-        # Send to MPD
+        self.client.cmd('pause')
 
     def volume_up(self):
         self.set_volume(self.volume + 5)
@@ -51,4 +55,6 @@ class MpdPlayer:
         self.set_volume(self.volume - 5)
 
     def play_album(self, album):
-        # Send to MPD
+        self.client.cmd('clear')
+        self.client.cmd('add', album)
+        self.client.cmd('play')        
