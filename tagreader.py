@@ -21,9 +21,12 @@ class TagReader:
         while True:
             self.clf.connect(rdwr={'on-connect': self.on_connect})
 
-    def on_connect (self, tag):
+    def on_connect (self, tag):        
         log(f"TagReader: Tag {tag} discovered.")
-        self.last_tag = tag
-        self.tag_event.set()
-        self.tag_discovered.fire(tag.identifier.encode('hex'))
+        try:
+            self.last_tag = tag
+            self.tag_event.set()
+            self.tag_discovered.fire(tag.identifier.encode('hex'))
+        except:
+            pass
         return True

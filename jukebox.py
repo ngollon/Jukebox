@@ -24,7 +24,7 @@ log("Initalizing Libraries")
 library = Library(library_path)
 
 def on_tag_discovered(tag):
-    # Check if there is a album with this name
+    # Check if there is a album with this name    
     uri = library.find_tag(tag)
     if not uri is None:
         p.play_album(uri)
