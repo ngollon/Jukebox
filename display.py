@@ -2,7 +2,7 @@ from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.oled.device import ssd1306
 
-from ImageFont import truetype
+from PIL import ImageFont
 
 # https://luma-oled.readthedocs.io/en/latest/hardware.html#i2c
 
@@ -20,7 +20,7 @@ class Display:
             width = self.device.width
             height = self.device.height
         
-            font = truetype('VCR_OSD_MONO_1.001.ttf', size)
+            font = ImageFont.truetype('VCR_OSD_MONO_1.001.ttf', size)
             (tw, th) = font.getsize(text)
 
             draw.text(((width - tw) / 2, (height - th) / 2), text, font=font, fill=255)

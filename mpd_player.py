@@ -1,4 +1,4 @@
-from time import time
+from time import time, sleep
 from event import Event
 import RPi.GPIO as GPIO
 import threading
@@ -18,6 +18,7 @@ class MpdPlayer:
         self.monitoring_thread.daemon = True
         self.monitoring_thread.start()
 
+        self.playerstate = 'stop'
         self.track_changed = Event()
         self.stopped = Event()
         self.volume = 0
@@ -26,10 +27,14 @@ class MpdPlayer:
     def run_monitoring_thread(self):
         try:         
             while True:
-                print(self.client.idle())     
-                # Fire stopped and track_changed!           
-        except (KeyboardInterrupt, SystemExit):
-            pass
+                status = self.client.status()
+                if status['state'] == 'stop' and self.playerstate != 'stop':
+                    self.stopped.fire()
+                
+                self.playerstate = status['state']
+                sleep(1)
+        except (KeyboardInterrupt, SystemExit, musicpd.ConnectionError):
+            self.client.connect() 
 
     def set_volume(self, new_volume):
         if new_volume > 100:
@@ -39,7 +44,7 @@ class MpdPlayer:
         if new_volume != self.volume:
             self.volume = new_volume
             log(f"Player: Setting volume to {self.volume}")
-            self.client.volume(self.volume)
+            self.client.setvol(self.volume)
 
     def previous(self):
         log(f"Player: Go to previous track")

@@ -1,7 +1,6 @@
 import nfc
 import threading
 from event import Event
-from thread import start_new_thread
 from time import sleep
 from log import log
 
@@ -10,7 +9,9 @@ class TagReader:
         self.clf = nfc.ContactlessFrontend(connection_string)
         self.tag_discovered = Event()
         self.tag_event = threading.Event()
-        start_new_thread(self.loop, ())
+        self.monitoring_thread = threading.Thread(target=self.loop)
+        self.monitoring_thread.daemon = True
+        self.monitoring_thread.start()
 
     def wait_for_tag(self):
         self.tag_event.clear()
