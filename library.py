@@ -22,7 +22,7 @@ class Library:
             file.write(f"file:{name}")
     
     def untagged_albums(self):
-        all_albums = [ name for name in listdir(self.library_path) if isdir(join(self.library_path, name)) ]
+        all_albums = [ name for name in listdir(self.files_path) if isdir(join(self.files_path, name)) ]
         indexed_albums = [ c[1] for c in [ self.parse(self.index_content(f)) for f in self.index_files() ] if c[0] == 'file' ]
         return [ name for name in all_albums if name not in indexed_albums ] 
         

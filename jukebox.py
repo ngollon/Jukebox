@@ -48,7 +48,7 @@ tr = TagReader('tty:AMA0:pn532')
 d.clear()
 
 log("Checking for new albums")
-for name in library.untagged_albums:
+for name in library.untagged_albums():
     log(f"New album {name} found.")
     d.draw_text(name, 12)
     tag = tr.wait_for_tag()
