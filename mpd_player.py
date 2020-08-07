@@ -67,11 +67,8 @@ class MpdPlayer:
     def play(self, uris):        
         self.client.clear()
         for uri in uris:
+            log(f"Player: Adding {uri} to playlist")
             self.client.add(uri)
         log("Player: Starting playback")
-        self.client.play()        
-    
-    def add(self, uri):
-        log(f"Player: Adding {uri} to playlist")
-        self.client.add(uri)
+        self.client.play()    
         
