@@ -64,8 +64,14 @@ class MpdPlayer:
     def volume_down(self):
         self.set_volume(self.volume - 5)
 
-    def play_album(self, album):
-        log(f"Player: Starting album {album}")
+    def play(self, uris):        
         self.client.clear()
-        self.client.add(album)
+        for uri in uris:
+            self.client.add(uri)
+        log("Player: Starting playback")
         self.client.play()        
+    
+    def add(self, uri):
+        log(f"Player: Adding {uri} to playlist")
+        self.client.add(uri)
+        

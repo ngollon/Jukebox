@@ -25,9 +25,9 @@ library = Library(library_path)
 
 def on_tag_discovered(tag):
     # Check if there is a album with this name    
-    uri = library.find_tag(tag)
-    if not uri is None:
-        p.play_album(uri)
+    uris = library.find_tag(tag)
+    if any(uris):
+        p.play(uris)
     else:
         d.draw_text(tag, 12)    
 
@@ -48,12 +48,12 @@ tr = TagReader('tty:AMA0:pn532')
 d.clear()
 
 log("Checking for new albums")
-for name in library.untagged_albums():
-    log(f"New album {name} found.")
-    d.draw_text(name, 12)
+for folder in library.unindexed_folders():
+    log(f"New folder {folder} found.")
+    d.draw_text(folder, 12)
     tag = tr.wait_for_tag()
-    library.index(tag, name)
-    log(f"New album {name} assigned to tag {tag}.")    
+    library.add_to_index(tag, folder)
+    log(f"New album {folder} assigned to tag {tag}.")    
 
 tr.tag_discovered += on_tag_discovered
 
