@@ -11,7 +11,7 @@ from log import log
 # Initialize display first to write Hello
 log("Initializing Display")
 d = Display()
-d.draw_text("Hallo!", 32)
+d.draw_text("Hallo!")
 
 library_path = "/srv/library"
 
@@ -29,9 +29,9 @@ def on_tag_discovered(tag):
     if any(uris):
         p.play(uris)
     else:
-        d.draw_text(tag, 12)    
+        d.draw_text(tag)    
 
-p.track_changed += lambda number: d.draw_text(str(number), 40)
+p.track_changed += lambda number: d.draw_text(str(number))
 p.stopped += lambda: d.clear()
 
 # We have a few buttons
@@ -50,7 +50,7 @@ d.clear()
 log("Checking for new albums")
 for folder in library.unindexed_folders():
     log(f"New folder {folder} found.")
-    d.draw_text(folder, 12)
+    d.draw_text(folder)
     tag = tr.wait_for_tag()
     library.add_to_index(tag, folder)
     log(f"New album {folder} assigned to tag {tag}.")    
