@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "87d3aad1e827a728d62fa05667665de424f0fbfa9ec07d95dfc3a3544c41b849"
+            "sha256": "d69f766c24567b999d3d26db3959f73bafe6756fa33e89129b8cb5f35128b683"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,9 @@
         ]
     },
     "default": {
+        "f746258": {
+            "file": "https://github.com/ismailof/mopidy-json-client/archive/master.zip"
+        },
         "libusb1": {
             "hashes": [
                 "sha256:240f65ac70ba3fab77749ec84a412e4e89624804cb80d6c9d394eef5af8878d6"

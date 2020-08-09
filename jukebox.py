@@ -23,15 +23,15 @@ p = MpdPlayer(24)
 log("Initalizing Libraries")
 library = Library(library_path)
 
-def on_tag_discovered(tag):
+def on_tag_discovered(tag):    
     # Check if there is a album with this name    
-    uris = library.find_tag(tag)
+    uris = library.find_tag(tag)    
     if any(uris):
         p.play(uris)
     else:
         d.draw_text(tag)    
 
-p.track_changed += lambda number: d.draw_text(str(number))
+p.track_changed += lambda number: d.draw_text(number)
 p.stopped += lambda: d.clear()
 
 # We have a few buttons
@@ -43,17 +43,17 @@ button_volup = Button(23, callback=p.volume_up)
 button_voldown = Button(22, callback=p.volume_down)
 
 log("Initializing Tag Reader")
-tr = TagReader('tty:AMA0:pn532')
+tr = TagReader('tty:S0:pn532')
 
-d.clear()
+d.draw_text("Los gehts")
 
 log("Checking for new albums")
-for folder in library.unindexed_folders():
-    log(f"New folder {folder} found.")
-    d.draw_text(folder)
-    tag = tr.wait_for_tag()
-    library.add_to_index(tag, folder)
-    log(f"New album {folder} assigned to tag {tag}.")    
+#for folder in library.unindexed_folders():
+#    log(f"New folder {folder} found.")
+#    d.draw_text(folder)
+#    tag = tr.wait_for_tag()
+#    library.add_to_index(tag, folder)
+#    log(f"New album {folder} assigned to tag {tag}.")    
 
 tr.tag_discovered += on_tag_discovered
 

@@ -30,7 +30,7 @@ class Library:
     
     def unindexed_folders(self):
         all_albums = [ name for name in listdir(self.files_path) if isdir(join(self.files_path, name)) ]
-        indexed_albums = [ name.rsplit(" ", 1)[0] for name in self.index_files() ]
+        indexed_albums = [ name.rsplit(" ", 1)[0] for name in self.index_files() ] + [ name for name in self.index_files() ]
         return [ name for name in all_albums if name not in indexed_albums ] 
         
     def index_files(self):
