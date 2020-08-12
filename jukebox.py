@@ -6,6 +6,7 @@ from display import Display
 from library import Library
 import RPi.GPIO as GPIO
 from log import log
+from time import sleep
 
 
 # Initialize display first to write Hello
@@ -61,6 +62,7 @@ log("Initialization done")
 
 try:
     while True:
+        sleep(1)
         pass
 except KeyboardInterrupt:
     pass

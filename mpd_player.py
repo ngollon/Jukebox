@@ -13,6 +13,7 @@ class MpdPlayer:
 
         self.client = MPDClient()
         self.client.connect('localhost', 6600)
+        self.client.clear()
 
         self.monitoring_thread = threading.Thread(target=self.run_monitoring_thread)
         self.monitoring_thread.daemon = True
@@ -23,7 +24,7 @@ class MpdPlayer:
         self.track_changed = Event()
         self.stopped = Event()
         self.volume = -1
-        self.set_volume(10)        
+        self.set_volume(30)        
 
     def run_monitoring_thread(self):
         try:         
@@ -54,8 +55,8 @@ class MpdPlayer:
     def set_volume(self, new_volume):
         if new_volume > 100:
             new_volume = 100
-        if new_volume < 0:
-            new_volume = 0
+        if new_volume < 10:
+            new_volume = 10
         if new_volume != self.volume:
             self.volume = new_volume
             log(f"Player: Setting volume to {self.volume}")
